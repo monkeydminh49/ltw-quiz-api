@@ -88,7 +88,7 @@ public class TestService {
     }
 
 
-    //get all tests
+    //get all tests from database
     public List<Test> getAllTests() {
         return testRepository.findAll();
     }
