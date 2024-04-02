@@ -16,9 +16,9 @@ import java.util.List;
 @Builder
 @Component
 public class TestInputDTO {
-    private Long documentId;
     private String title;
     private List<QuestionInputDTO> questions;
     @Schema(description = "Type of the test", example = "WRITING | MULTIPLE_CHOICE")
     private TestType type;
+    private Double durationInMinutes;
 }
