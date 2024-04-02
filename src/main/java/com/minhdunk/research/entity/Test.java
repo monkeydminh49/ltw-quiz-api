@@ -45,5 +45,4 @@ public class Test {
     private TestType type;
     private LocalDateTime createdAt;
     private Double durationInMinutes;
-
 }

@@ -1,6 +1,7 @@
 package com.minhdunk.research.controller;
 
 import com.minhdunk.research.dto.BaseResponse;
+import com.minhdunk.research.dto.QuestionSubmitDTO;
 import com.minhdunk.research.dto.TestDTO;
 import com.minhdunk.research.dto.TestInputDTO;
 import com.minhdunk.research.entity.Test;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -40,4 +43,13 @@ public class TestController {
         testService.deleteTest(testId);
         return new BaseResponse("ok", "Delete test successfully", null);
     }
+
+
+    @PostMapping("/{testId}/submit")
+    public BaseResponse submitTest(@PathVariable Long testId, @RequestBody List<QuestionSubmitDTO> questionSubmitDTO) {
+        testService.submitTest(testId, questionSubmitDTO);
+        return new BaseResponse("ok", "Submit test successfully", null);
+    }
+
+
 }
