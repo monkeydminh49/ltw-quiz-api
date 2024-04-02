@@ -27,7 +27,6 @@ public class TestController {
     public BaseResponse createTest(Authentication authentication, @RequestBody TestInputDTO testInputDTO) {
         Test test = testService.createTest(authentication, testInputDTO);
         return new BaseResponse( "ok",  "Create test successfully", testMapper.getTestDTOFromTest(test));
-
     }
 
     @GetMapping("/{testId}")

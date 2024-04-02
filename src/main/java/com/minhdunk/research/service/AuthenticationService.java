@@ -2,9 +2,7 @@ package com.minhdunk.research.service;
 
 
 import com.minhdunk.research.component.UserInfoUserDetails;
-import com.minhdunk.research.dto.LoginRequestDTO;
-import com.minhdunk.research.dto.RegisterRequestDTO;
-import com.minhdunk.research.dto.UserOutputDTO;
+import com.minhdunk.research.dto.*;
 import com.minhdunk.research.entity.User;
 import com.minhdunk.research.exception.UserAlreadyExistsException;
 import com.minhdunk.research.mapper.UserMapper;
@@ -152,5 +150,4 @@ public class AuthenticationService {
         }
 
     }
-
 }

@@ -24,5 +24,4 @@ public class UserOutputDTO {
     private LocalDate dateOfBirth;
     private String avatarId;
     private UserGender gender;
-
 }

@@ -1,7 +1,9 @@
 package com.minhdunk.research.controller;
 
 import com.minhdunk.research.dto.BaseResponse;
+import com.minhdunk.research.dto.UserInputDTO;
 import com.minhdunk.research.dto.UserOutputDTO;
+import com.minhdunk.research.entity.User;
 import com.minhdunk.research.mapper.UserMapper;
 import com.minhdunk.research.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,5 +43,31 @@ public class UserController {
     @GetMapping("/users/all")
     private List<UserOutputDTO> getAllUsers(){
         return userMapper.getUserOutputDTOsFromUsers(userService.getAllUsers());
+    }
+
+//    edit user infor
+    @PutMapping("/users/{id}")
+    private BaseResponse editUser(@PathVariable Long id, @RequestBody UserInputDTO userInputDTO){
+        userService.editUser(id, userInputDTO);
+        return new BaseResponse("ok", "Edit user successfully", null);
+    }
+
+    @PostMapping("/users/create")
+    private BaseResponse createUser(@RequestBody UserInputDTO userInputDTO){
+        var user = userService.createUser(userInputDTO);
+        return new BaseResponse("ok", "Create user successfully", userMapper.getUserOutputDTOFromUser(user));
+    }
+
+    @PostMapping("/users/admin/create")
+    private BaseResponse createAdmin(@RequestBody UserInputDTO userInputDTO){
+        var user = userService.createAdmin(userInputDTO);
+        return new BaseResponse("ok", "Create admin successfully", userMapper.getUserOutputDTOFromUser((User) user));
+    }
+
+//    delete user
+    @DeleteMapping("/users/{id}")
+    private BaseResponse deleteUser(@PathVariable Long id){
+        userService.deleteUser(id);
+        return new BaseResponse("ok", "Delete user successfully", null);
     }
 }

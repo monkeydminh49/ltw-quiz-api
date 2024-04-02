@@ -2,10 +2,7 @@ package com.minhdunk.research.controller;
 
 
 import com.minhdunk.research.component.UserInfoUserDetails;
-import com.minhdunk.research.dto.BaseResponse;
-import com.minhdunk.research.dto.LoginRequestDTO;
-import com.minhdunk.research.dto.RegisterRequestDTO;
-import com.minhdunk.research.dto.UserOutputDTO;
+import com.minhdunk.research.dto.*;
 import com.minhdunk.research.mapper.UserMapper;
 import com.minhdunk.research.repository.UserRepository;
 import com.minhdunk.research.service.AuthenticationService;
@@ -46,9 +43,6 @@ public class AuthenticationController {
         return userResponse;
     }
 
-
-
-
     @PostMapping("/login")
     public ResponseEntity<UserOutputDTO> login(@RequestBody LoginRequestDTO request) {
 
@@ -69,7 +63,6 @@ public class AuthenticationController {
 //        }
 
         return ResponseEntity.ok(userOutputDTO);
-
     }
 
 }

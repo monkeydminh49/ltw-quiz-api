@@ -108,13 +108,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter  {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                if (!sendVerificationEmail && !user.getUser().getEnabled()) {
-                    log.info("Email not verified");
-                    response.setStatus(HttpStatus.valueOf(409).value());
-                    response.setHeader("message", "Email not verified");
-                    response.sendError(HttpStatus.valueOf(409).value(), "Email not verified");
-                    response.setHeader("message", "Email not verified");
-                }
+//                if (!sendVerificationEmail && !user.getUser().getEnabled()) {
+//                    log.info("Email not verified");
+//                    response.setStatus(HttpStatus.valueOf(409).value());
+//                    response.setHeader("message", "Email not verified");
+//                    response.sendError(HttpStatus.valueOf(409).value(), "Email not verified");
+//                    response.setHeader("message", "Email not verified");
+//                }
             }
 
         }

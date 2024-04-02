@@ -2,6 +2,7 @@ package com.minhdunk.research.mapper;
 
 import com.minhdunk.research.dto.RegisterRequestDTO;
 import com.minhdunk.research.dto.StudentOutputDTO;
+import com.minhdunk.research.dto.UserInputDTO;
 import com.minhdunk.research.dto.UserOutputDTO;
 import com.minhdunk.research.entity.User;
 import org.mapstruct.Mapper;
@@ -28,4 +29,9 @@ public interface UserMapper {
     StudentOutputDTO getStudentOutputDTOFromUser(User user);
 
     List<StudentOutputDTO> getStudentOutputDTOsFromUsers(List<User> users);
+
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    User getUserFromUserInputDTO(UserInputDTO userInputDTO);
+
 }
