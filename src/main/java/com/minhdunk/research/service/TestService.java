@@ -1,14 +1,14 @@
 package com.minhdunk.research.service;
 
 import com.minhdunk.research.component.UserInfoUserDetails;
+import com.minhdunk.research.dto.ChoiceSubmitDTO;
 import com.minhdunk.research.dto.QuestionSubmitDTO;
 import com.minhdunk.research.dto.TestInputDTO;
-import com.minhdunk.research.entity.Question;
-import com.minhdunk.research.entity.Test;
-import com.minhdunk.research.entity.TestHistory;
-import com.minhdunk.research.entity.User;
+import com.minhdunk.research.entity.*;
 import com.minhdunk.research.exception.NotFoundException;
 import com.minhdunk.research.exception.TestTypeExistsForDocumentException;
+import com.minhdunk.research.mapper.ChoiceMapper;
+import com.minhdunk.research.mapper.QuestionMapper;
 import com.minhdunk.research.mapper.TestMapper;
 import com.minhdunk.research.repository.*;
 import com.minhdunk.research.utils.HintType;
@@ -18,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,10 @@ public class TestService {
     private TestRepository testRepository;
     @Autowired
     private TestMapper testMapper;
+    @Autowired
+    private QuestionMapper questionMapper;
+    @Autowired
+    private ChoiceMapper choiceMapper;
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
@@ -92,25 +98,54 @@ public class TestService {
         testRepository.deleteById(testId);
     }
 
-    public void submitTest(Long testId, List<QuestionSubmitDTO> questionSubmitDTO) {
+    public TestHistory submitTest(Long testId, List<QuestionSubmitDTO> questionSubmitDTO) {
         Test test = testRepository.findById(testId).orElseThrow(() -> new NotFoundException("Test not found"));
 
-        TestHistory testHistory = new TestHistory();
+        TestHistory testHistory = testMapper.getTestHistoryFromTest(test);
+        testHistory.setSubmitAt(LocalDateTime.now());
 
-        Integer totalNumberOfQuestions = test.getQuestions().size();
+        int totalNumberOfQuestions = test.getQuestions().size();
+        TestHistory savedTest = testHistoryRepository.save(testHistory);
 
-        Integer countTotalNumberOfCorrectQuestions = 0;
-
-        questionSubmitDTO.forEach(questionSubmit -> {
+        int countTotalNumberOfCorrectQuestions = 0;
+        List<QuestionHistory> questionHistories = new ArrayList<>();
+        for (QuestionSubmitDTO questionSubmit : questionSubmitDTO) {
             Question question = questionRepository.findById(questionSubmit.getQuestionId()).orElseThrow(() -> new NotFoundException("Question not found"));
-            question.getChoices().forEach(choice -> {
-                questionSubmit.getChoices().forEach(choiceSubmit -> {
+            QuestionHistory questionHistory = questionMapper.getQuestionHistoryFromQuestion(question);
+            questionHistory.setTest(savedTest);
+            QuestionHistory questionHistory1 = questionHistoryRepository.save(questionHistory);
+            questionHistories.add(questionHistory1);
+
+            boolean isACorrectQuestion = true;
+            for (Choice choice : question.getChoices()) {
+                for (ChoiceSubmitDTO choiceSubmit : questionSubmit.getChoices()) {
                     if (choice.getId().equals(choiceSubmit.getChoiceId())) {
-                        ;
+                        if (!choice.getIsAnswer().equals(choiceSubmit.getIsPicked())) {
+                            isACorrectQuestion = false;
+                        }
+                        ChoiceHistory choiceHistory = choiceMapper.getChoiceHistoryFromChoice(choice);
+                        choiceHistory.setIsPicked(choiceSubmit.getIsPicked());
+                        choiceHistory.setQuestion(questionHistory1);
+
+                        choiceHistoryRepository.save(choiceHistory);
                     }
-                });
-            });
-        });
+                }
+            }
+            if (isACorrectQuestion) {
+                countTotalNumberOfCorrectQuestions++;
+            }
+        }
+
+        double score = (double) countTotalNumberOfCorrectQuestions / totalNumberOfQuestions * 10;
+
+        savedTest.setQuestions(questionHistories);
+        savedTest.setTotalScore(score);
+        return testHistoryRepository.save(testHistory);
+
+    }
+
+    public TestHistory getTestHistory(Long testId) {
+        return testHistoryRepository.findByTestId(testId).orElseThrow(() -> new NotFoundException("Test history not found"));
     }
 
     @Transactional

@@ -1,4 +1,4 @@
-package com.minhdunk.research.entity;
+package com.minhdunk.research.utils;
 
 public enum PostType {
     PENDING,
