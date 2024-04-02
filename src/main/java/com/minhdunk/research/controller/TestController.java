@@ -5,6 +5,7 @@ import com.minhdunk.research.dto.QuestionSubmitDTO;
 import com.minhdunk.research.dto.TestDTO;
 import com.minhdunk.research.dto.TestInputDTO;
 import com.minhdunk.research.entity.Test;
+import com.minhdunk.research.entity.TestHistory;
 import com.minhdunk.research.mapper.TestMapper;
 import com.minhdunk.research.service.TestService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +47,18 @@ public class TestController {
 
     @PostMapping("/{testId}/submit")
     public BaseResponse submitTest(@PathVariable Long testId, @RequestBody List<QuestionSubmitDTO> questionSubmitDTO) {
-        testService.submitTest(testId, questionSubmitDTO);
-        return new BaseResponse("ok", "Submit test successfully", null);
+        TestHistory testHistory =  testService.submitTest(testId, questionSubmitDTO);
+        return new BaseResponse("ok", "Submit test successfully", testHistory);
+    }
+
+    @GetMapping("/{testId}/history/")
+    public TestHistory getTestHistory(@PathVariable Long testId) {
+        return testService.getTestHistory(testId);
+    }
+
+    @GetMapping("/history/")
+    public TestHistory getUserTestHistory(@PathVariable Long testId) {
+        return testService.getTestHistory(testId);
     }
 
 
