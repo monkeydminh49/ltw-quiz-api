@@ -50,5 +50,9 @@ public class TestController {
         return new BaseResponse("ok", "Submit test successfully", null);
     }
 
+    @GetMapping("/all")
+    public List<TestDTO> getAllTests() {
+        return testMapper.getTestDTOsFromTests(testService.getAllTests());
+    }
 
 }

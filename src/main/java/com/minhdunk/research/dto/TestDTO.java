@@ -18,6 +18,9 @@ public class TestDTO {
     private String title;
     private List<QuestionDTO> questions;
     public String type;
+    public Double durationInMinutes;
+    public String startTime;
+    public String endTime;
 
     public List<QuestionDTO> getQuestions() {
         return questions != null ? questions : List.of();

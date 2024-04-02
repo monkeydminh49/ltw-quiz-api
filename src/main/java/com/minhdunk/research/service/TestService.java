@@ -112,4 +112,9 @@ public class TestService {
             });
         });
     }
+
+    @Transactional
+    public List<Test> getAllTests() {
+        return testRepository.findAll();
+    }
 }
