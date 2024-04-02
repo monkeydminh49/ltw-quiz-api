@@ -1,13 +1,12 @@
 package com.minhdunk.research.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.minhdunk.research.utils.TestType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-@Data
+//@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Component
@@ -41,13 +42,14 @@ public class TestHistory {
     @ManyToOne(fetch = FetchType.LAZY ,optional = false)
     @JoinColumn(name = "submitter_id", referencedColumnName = "id", nullable = false)
     private User submitter;
-    @ManyToOne(fetch = FetchType.LAZY ,optional = false)
-    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY ,optional = true)
+    @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = true)
     private User author;
     @Enumerated(EnumType.STRING)
     private TestType type;
     @ManyToOne(fetch = FetchType.LAZY ,optional = false)
     @JoinColumn(name = "test_id", referencedColumnName = "id", nullable = false)
+
     private Test test;
     private Double totalScore;
     private LocalDateTime submitAt;

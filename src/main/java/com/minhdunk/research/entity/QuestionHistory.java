@@ -48,7 +48,7 @@ public class QuestionHistory {
     @Fetch(FetchMode.SUBSELECT)
     @OneToMany(
             mappedBy = "question",
-            cascade = { CascadeType.REMOVE }
+            cascade = { CascadeType.REMOVE}
     )
     private List<ChoiceHistory> choices;
 

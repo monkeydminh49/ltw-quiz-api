@@ -4,6 +4,7 @@ import com.minhdunk.research.component.UserInfoUserDetails;
 import com.minhdunk.research.dto.ChoiceSubmitDTO;
 import com.minhdunk.research.dto.QuestionSubmitDTO;
 import com.minhdunk.research.dto.TestInputDTO;
+import com.minhdunk.research.dto.TestStatisticOutputDTO;
 import com.minhdunk.research.entity.*;
 import com.minhdunk.research.exception.NotFoundException;
 import com.minhdunk.research.exception.TestTypeExistsForDocumentException;
@@ -54,7 +55,7 @@ public class TestService {
         UserInfoUserDetails userInfoUserDetails = (UserInfoUserDetails) authentication.getPrincipal();
         User author = userInfoUserDetails.getUser();
         test.setAuthor(author);
-
+        test.setCreatedAt(LocalDateTime.now());
         Test savedTest =  testRepository.save(test);
 
         savedTest.getQuestions().forEach(question -> {
@@ -98,23 +99,24 @@ public class TestService {
         testRepository.deleteById(testId);
     }
 
-    public TestHistory submitTest(Long testId, List<QuestionSubmitDTO> questionSubmitDTO) {
+    @Transactional
+    public TestHistory submitTest(Long testId, List<QuestionSubmitDTO> questionSubmitDTO, Authentication authentication) {
+        UserInfoUserDetails userInfoUserDetails = (UserInfoUserDetails) authentication.getPrincipal();
+        User user = userInfoUserDetails.getUser();
+
         Test test = testRepository.findById(testId).orElseThrow(() -> new NotFoundException("Test not found"));
 
         TestHistory testHistory = testMapper.getTestHistoryFromTest(test);
+        testHistory.setSubmitter(user);
         testHistory.setSubmitAt(LocalDateTime.now());
+        testHistory.setTest(test);
 
         int totalNumberOfQuestions = test.getQuestions().size();
-        TestHistory savedTest = testHistoryRepository.save(testHistory);
+
 
         int countTotalNumberOfCorrectQuestions = 0;
-        List<QuestionHistory> questionHistories = new ArrayList<>();
         for (QuestionSubmitDTO questionSubmit : questionSubmitDTO) {
             Question question = questionRepository.findById(questionSubmit.getQuestionId()).orElseThrow(() -> new NotFoundException("Question not found"));
-            QuestionHistory questionHistory = questionMapper.getQuestionHistoryFromQuestion(question);
-            questionHistory.setTest(savedTest);
-            QuestionHistory questionHistory1 = questionHistoryRepository.save(questionHistory);
-            questionHistories.add(questionHistory1);
 
             boolean isACorrectQuestion = true;
             for (Choice choice : question.getChoices()) {
@@ -123,11 +125,6 @@ public class TestService {
                         if (!choice.getIsAnswer().equals(choiceSubmit.getIsPicked())) {
                             isACorrectQuestion = false;
                         }
-                        ChoiceHistory choiceHistory = choiceMapper.getChoiceHistoryFromChoice(choice);
-                        choiceHistory.setIsPicked(choiceSubmit.getIsPicked());
-                        choiceHistory.setQuestion(questionHistory1);
-
-                        choiceHistoryRepository.save(choiceHistory);
                     }
                 }
             }
@@ -138,24 +135,70 @@ public class TestService {
 
         double score = (double) countTotalNumberOfCorrectQuestions / totalNumberOfQuestions * 10;
 
-        savedTest.setQuestions(questionHistories);
-        savedTest.setTotalScore(score);
-        return testHistoryRepository.save(testHistory);
+        testHistory.setTotalScore(score);
+        TestHistory savedTest = testHistoryRepository.save(testHistory);
 
+
+        for (QuestionSubmitDTO questionSubmit : questionSubmitDTO) {
+            Question question = questionRepository.findById(questionSubmit.getQuestionId()).orElseThrow(() -> new NotFoundException("Question not found"));
+            QuestionHistory questionHistory = questionMapper.getQuestionHistoryFromQuestion(question);
+            questionHistory.setTest(savedTest);
+            QuestionHistory questionHistory1 = questionHistoryRepository.save(questionHistory);
+
+            for (Choice choice : question.getChoices()) {
+                for (ChoiceSubmitDTO choiceSubmit : questionSubmit.getChoices()) {
+                    if (choice.getId().equals(choiceSubmit.getChoiceId())) {
+
+                        ChoiceHistory choiceHistory = choiceMapper.getChoiceHistoryFromChoice(choice);
+                        choiceHistory.setIsPicked(choiceSubmit.getIsPicked());
+                        choiceHistory.setQuestion(questionHistory1);
+                        choiceHistory.setTest(savedTest);
+                        choiceHistoryRepository.save(choiceHistory);
+                    }
+                }
+            }
+
+        }
+
+        return savedTest;
     }
 
-    public TestHistory getTestHistory(Long testId) {
-        return testHistoryRepository.findByTestId(testId).orElseThrow(() -> new NotFoundException("Test history not found"));
+    public List<TestHistory> getTestHistory(Long testId) {
+        return testHistoryRepository.findByTestId(testId);
     }
 
-    public TestHistory getUserTestHistory(Long testId, Authentication authentication) {
+    public List<TestHistory> getUserTestHistory(Long testId, Authentication authentication) {
         UserInfoUserDetails userInfoUserDetails = (UserInfoUserDetails) authentication.getPrincipal();
         User user = userInfoUserDetails.getUser();
-        return testHistoryRepository.findByTestIdAndSubmitterId(testId, user.getId()).orElseThrow(() -> new NotFoundException("Test history not found"));
+        return testHistoryRepository.findByTestIdAndSubmitterId(testId, user.getId());
     }
 
     @Transactional
     public List<Test> getAllTests() {
         return testRepository.findAll();
+    }
+
+    public TestHistory getTestHistoryByTestHistoryId(Long testId) {
+        return testHistoryRepository.findById(testId).orElseThrow(() -> new NotFoundException("Test history not found"));
+    }
+
+    public TestStatisticOutputDTO getTestHistoryStatistics(Long testId) {
+        Test test = testRepository.findById(testId).orElseThrow(() -> new NotFoundException("Test not found"));
+        List<TestHistory> testHistories = testHistoryRepository.findByTestId(testId);
+
+        int totalNumberOfTest = testHistories.size();
+        double totalScore = 0;
+        for (TestHistory testHistory : testHistories) {
+            totalScore += testHistory.getTotalScore();
+        }
+
+        double averageScore = totalScore / totalNumberOfTest;
+
+
+        TestStatisticOutputDTO testStatisticOutputDTO = new TestStatisticOutputDTO();
+        testStatisticOutputDTO.setAverageScore(averageScore);
+        testStatisticOutputDTO.setNumberOfAttempt(totalNumberOfTest);
+
+        return testStatisticOutputDTO;
     }
 }

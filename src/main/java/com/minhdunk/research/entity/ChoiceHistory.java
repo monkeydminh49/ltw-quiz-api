@@ -34,4 +34,7 @@ public class ChoiceHistory {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name="question_id", referencedColumnName = "id", nullable=false)
     private QuestionHistory question;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="test_id", referencedColumnName = "id", nullable=false)
+    private TestHistory test;
 }

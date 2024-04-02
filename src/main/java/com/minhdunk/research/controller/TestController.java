@@ -1,15 +1,13 @@
 package com.minhdunk.research.controller;
 
-import com.minhdunk.research.dto.BaseResponse;
-import com.minhdunk.research.dto.QuestionSubmitDTO;
-import com.minhdunk.research.dto.TestDTO;
-import com.minhdunk.research.dto.TestInputDTO;
+import com.minhdunk.research.dto.*;
 import com.minhdunk.research.entity.Test;
 import com.minhdunk.research.entity.TestHistory;
 import com.minhdunk.research.mapper.TestMapper;
 import com.minhdunk.research.service.TestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -46,24 +44,37 @@ public class TestController {
 
 
     @PostMapping("/{testId}/submit")
-    public BaseResponse submitTest(@PathVariable Long testId, @RequestBody List<QuestionSubmitDTO> questionSubmitDTO) {
-        TestHistory testHistory =  testService.submitTest(testId, questionSubmitDTO);
+    public BaseResponse submitTest(Authentication authentication, @PathVariable Long testId, @RequestBody List<QuestionSubmitDTO> questionSubmitDTO) {
+        TestHistory testHistory =  testService.submitTest(testId, questionSubmitDTO, authentication);
         return new BaseResponse("ok", "Submit test successfully", null);
     }
 
     @GetMapping("/{testId}/history/")
-    public TestHistory getTestHistory(@PathVariable Long testId) {
-        return testService.getTestHistory(testId);
+    public List<TestHistoryOutputDTO> getTestHistorysByTestId(@PathVariable Long testId) {
+        return testMapper.getTestHistoryOutputDTOsFromTestHistorys(testService.getTestHistory(testId));
     }
 
     @GetMapping("/history/")
-    public TestHistory getUserTestHistory(@PathVariable Long testId, Authentication authentication) {
-        return testService.getUserTestHistory(testId, authentication);
+    public List<TestHistoryOutputDTO> getUserTestHistory(@PathVariable Long testId, Authentication authentication) {
+        return testMapper.getTestHistoryOutputDTOsFromTestHistorys(testService.getUserTestHistory(testId, authentication));
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<TestDTO> getAllTests() {
         return testMapper.getTestDTOsFromTests(testService.getAllTests());
     }
+
+    @GetMapping("/history/{testHistoryId}")
+    public TestHistoryOutputDTO getTestHistoryByTestHistoryId(@PathVariable Long testId) {
+        return testMapper.getTestHistoryOutputDTOFromTestHistory(testService.getTestHistoryByTestHistoryId(testId));
+    }
+
+    @GetMapping("/history/{testId}/statistics")
+    public TestStatisticOutputDTO getTestHistoryStatistics(@PathVariable Long testId) {
+        return testService.getTestHistoryStatistics(testId);
+    }
+
+
 
 }

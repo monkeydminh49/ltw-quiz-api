@@ -19,7 +19,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   application:
     name: QuizManagement
-
+springdoc:
+  swagger-ui:
+    displayOperationId: true
 application:
   security:
     jwt:
