@@ -12,8 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @CrossOrigin
 @RestController
 @Slf4j
@@ -41,11 +39,5 @@ public class TestController {
     public BaseResponse deleteTest(@PathVariable Long testId) {
         testService.deleteTest(testId);
         return new BaseResponse("ok", "Delete test successfully", null);
-    }
-
-    //get all tests
-    @GetMapping("/all")
-    public List<TestDTO> getAllTests() {
-        return (List<TestDTO>) new BaseResponse("ok", "Get all tests successfully", testMapper.getTestDTOsFromTests(testService.getAllTests()));
     }
 }

@@ -42,7 +42,4 @@ public class UserController {
     private List<UserOutputDTO> getAllUsers(){
         return userMapper.getUserOutputDTOsFromUsers(userService.getAllUsers());
     }
-
-    //get all users
-
 }
