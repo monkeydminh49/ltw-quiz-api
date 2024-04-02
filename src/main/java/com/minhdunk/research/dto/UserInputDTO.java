@@ -10,9 +10,11 @@ import java.time.LocalDate;
 public class UserInputDTO {
     private String firstName;
     private String lastName;
-    private String username;
+    private String username = "user";
     private String email;
     private LocalDate dateOfBirth;
+    private UserGender gender = UserGender.OTHER;
+    private String password = "123456";
 
     public UserInputDTO(String firstName, String lastName, String username, String email, LocalDate dateOfBirth) {
         this.firstName = firstName;

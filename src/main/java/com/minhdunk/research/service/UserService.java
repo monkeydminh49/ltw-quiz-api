@@ -55,6 +55,12 @@ public class UserService {
         if (userInputDTO.getDateOfBirth() != null) {
             user.setDateOfBirth(userInputDTO.getDateOfBirth());
         }
+        if (userInputDTO.getGender() != null) {
+            user.setGender(userInputDTO.getGender());
+        }
+        if (userInputDTO.getUsername() != null) {
+            user.setUsername(userInputDTO.getUsername());
+        }
         return userRepository.save(user);
     }
     @Transactional
@@ -66,6 +72,7 @@ public class UserService {
         user.setUsername(userInputDTO.getUsername());
         user.setDateOfBirth(userInputDTO.getDateOfBirth());
         user.setRole(UserRole.ROLE_STUDENT);
+        user.setPassword(userInputDTO.getPassword());
         return userRepository.save(user);
     }
     @Transactional
@@ -77,9 +84,10 @@ public class UserService {
         user.setUsername(userInputDTO.getUsername());
         user.setDateOfBirth(userInputDTO.getDateOfBirth());
         user.setRole(UserRole.ROLE_ADMIN);
+        user.setPassword(userInputDTO.getPassword());
         return userRepository.save(user);
     }
-    @Transactional
+
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
