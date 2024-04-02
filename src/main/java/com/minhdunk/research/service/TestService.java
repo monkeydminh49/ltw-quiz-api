@@ -153,4 +153,9 @@ public class TestService {
         User user = userInfoUserDetails.getUser();
         return testHistoryRepository.findByTestIdAndSubmitterId(testId, user.getId()).orElseThrow(() -> new NotFoundException("Test history not found"));
     }
+
+    @Transactional
+    public List<Test> getAllTests() {
+        return testRepository.findAll();
+    }
 }

@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -21,4 +23,6 @@ public class TestInputDTO {
     @Schema(description = "Type of the test", example = "WRITING | MULTIPLE_CHOICE")
     private TestType type;
     private Double durationInMinutes;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

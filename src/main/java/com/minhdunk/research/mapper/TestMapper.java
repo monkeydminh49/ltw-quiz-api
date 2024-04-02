@@ -23,6 +23,9 @@ public interface TestMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "author", ignore = true)
+    @Mapping(target = "startTime", source = "startTime")
+    @Mapping(target = "endTime", source = "endTime")
+    @Mapping(target = "durationInMinutes", source = "durationInMinutes")
     Test getTestFromTestInputDTO(TestInputDTO testInputDTO);
 
     List<TestDTO> getTestDTOsFromTests(List<Test> testsByDocumentId);

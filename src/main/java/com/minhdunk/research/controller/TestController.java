@@ -48,7 +48,7 @@ public class TestController {
     @PostMapping("/{testId}/submit")
     public BaseResponse submitTest(@PathVariable Long testId, @RequestBody List<QuestionSubmitDTO> questionSubmitDTO) {
         TestHistory testHistory =  testService.submitTest(testId, questionSubmitDTO);
-        return new BaseResponse("ok", "Submit test successfully", testHistory);
+        return new BaseResponse("ok", "Submit test successfully", null);
     }
 
     @GetMapping("/{testId}/history/")
@@ -61,5 +61,9 @@ public class TestController {
         return testService.getUserTestHistory(testId, authentication);
     }
 
+    @GetMapping("/all")
+    public List<TestDTO> getAllTests() {
+        return testMapper.getTestDTOsFromTests(testService.getAllTests());
+    }
 
 }
