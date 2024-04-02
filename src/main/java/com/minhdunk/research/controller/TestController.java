@@ -46,6 +46,6 @@ public class TestController {
     //get all tests
     @GetMapping("/all")
     public List<TestDTO> getAllTests() {
-        return (List<TestDTO>) new BaseResponse("ok", "Get all tests successfully", testMapper.getTestDTOsFromTests(testService.getAllTests()));
+        return testMapper.getTestDTOsFromTests(testService.getAllTests());
     }
 }
