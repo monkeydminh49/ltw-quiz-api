@@ -62,11 +62,13 @@ public class AuthenticationController {
         userOutputDTO.setToken(accessToken);
         log.info("User " + request.getUsername() + " login successfully");
 
-        if (user.getEnabled()){
-            return ResponseEntity.ok(userOutputDTO);
-        } else{
-            return ResponseEntity.status(409).body(userOutputDTO);
-        }
+//        if (user.getEnabled()){
+//            return ResponseEntity.ok(userOutputDTO);
+//        } else{
+//            return ResponseEntity.status(409).body(userOutputDTO);
+//        }
+
+        return ResponseEntity.ok(userOutputDTO);
 
     }
 
