@@ -57,8 +57,8 @@ public class TestController {
     }
 
     @GetMapping("/history/")
-    public TestHistory getUserTestHistory(@PathVariable Long testId) {
-        return testService.getTestHistory(testId);
+    public TestHistory getUserTestHistory(@PathVariable Long testId, Authentication authentication) {
+        return testService.getUserTestHistory(testId, authentication);
     }
 
 

@@ -147,4 +147,10 @@ public class TestService {
     public TestHistory getTestHistory(Long testId) {
         return testHistoryRepository.findByTestId(testId).orElseThrow(() -> new NotFoundException("Test history not found"));
     }
+
+    public TestHistory getUserTestHistory(Long testId, Authentication authentication) {
+        UserInfoUserDetails userInfoUserDetails = (UserInfoUserDetails) authentication.getPrincipal();
+        User user = userInfoUserDetails.getUser();
+        return testHistoryRepository.findByTestIdAndSubmitterId(testId, user.getId()).orElseThrow(() -> new NotFoundException("Test history not found"));
+    }
 }

@@ -12,4 +12,7 @@ public interface TestHistoryRepository extends JpaRepository<TestHistory, Long> 
 
     @Query("SELECT th FROM TestHistory th WHERE th.test.id = ?1")
     Optional<TestHistory> findByTestId(Long testId);
+
+    @Query("SELECT th FROM TestHistory th WHERE th.test.id = ?1 AND th.submitter.id = ?2")
+    Optional<TestHistory> findByTestIdAndSubmitterId(Long testId, Long id);
 }
