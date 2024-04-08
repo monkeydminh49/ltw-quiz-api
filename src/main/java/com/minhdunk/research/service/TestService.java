@@ -178,8 +178,8 @@ public class TestService {
         return testRepository.findAll();
     }
 
-    public TestHistory getTestHistoryByTestHistoryId(Long testId) {
-        return testHistoryRepository.findById(testId).orElseThrow(() -> new NotFoundException("Test history not found"));
+    public TestHistory getTestHistoryByTestHistoryId(Long testHistoryId) {
+        return testHistoryRepository.findById(testHistoryId).orElseThrow(() -> new NotFoundException("Test history not found"));
     }
 
     public TestStatisticOutputDTO getTestHistoryStatistics(Long testId) {
@@ -200,5 +200,9 @@ public class TestService {
         testStatisticOutputDTO.setNumberOfAttempt(totalNumberOfTest);
 
         return testStatisticOutputDTO;
+    }
+
+    public void deleteTestHistory(Long testHistoryId) {
+        testHistoryRepository.deleteById(testHistoryId);
     }
 }

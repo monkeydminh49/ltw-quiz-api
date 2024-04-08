@@ -66,8 +66,8 @@ public class TestController {
     }
 
     @GetMapping("/history/{testHistoryId}")
-    public TestHistoryOutputDTO getTestHistoryByTestHistoryId(@PathVariable Long testId) {
-        return testMapper.getTestHistoryOutputDTOFromTestHistory(testService.getTestHistoryByTestHistoryId(testId));
+    public TestHistoryOutputDTO getTestHistoryByTestHistoryId(@PathVariable Long testHistoryId) {
+        return testMapper.getTestHistoryOutputDTOFromTestHistory(testService.getTestHistoryByTestHistoryId(testHistoryId));
     }
 
     @GetMapping("/history/{testId}/statistics")
@@ -75,6 +75,10 @@ public class TestController {
         return testService.getTestHistoryStatistics(testId);
     }
 
-
+    @DeleteMapping("/history/{testHistoryId}")
+    public BaseResponse deleteTestHistory(@PathVariable Long testHistoryId) {
+        testService.deleteTestHistory(testHistoryId);
+        return new BaseResponse("ok", "Delete test history successfully", null);
+    }
 
 }
