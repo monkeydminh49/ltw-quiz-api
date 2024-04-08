@@ -11,6 +11,7 @@ import com.minhdunk.research.utils.UserRole;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +33,7 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(()->new NotFoundException("User with id " + id + " not found."));
     }
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

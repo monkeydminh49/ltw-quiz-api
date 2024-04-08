@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/users/all")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     private List<UserOutputDTO> getAllUsers(){
         return userMapper.getUserOutputDTOsFromUsers(userService.getAllUsers());
     }
